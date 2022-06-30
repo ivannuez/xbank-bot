@@ -1,7 +1,5 @@
+require('dotenv').config();
 const axios = require("axios").default;
-
-var phone_number_id_empresa = 112045928209823;
-var token = "EAAHZCIpC5ZAZCoBAFr0Iq4mZCiJ4ky1MybtbyEAKkihGSWXi4wgWXC62Vn7pZCIZCMDAJXC5HpUC2qtBZAVyBHFTjIZBb9tUkD7eUtBMA7uiojOuvQZCvjFAGZCXbZBqp9V1VjK0vLPTl8ZBQnZAvpOJesLmt1k0x2oJGRYhG4J3iggYezS32rXwOJvAm3wJi4oErHPQ1c9zwXm0G5AZDZD";
 
 var wa_services = {
     //FUNCIONA
@@ -12,9 +10,9 @@ var wa_services = {
                 },
                 method: "POST",
                 url: "https://graph.facebook.com/v12.0/" +
-                    phone_number_id_empresa +
+                    process.env.PHONE_NUMBER_ID_EMPRESA +
                     "/messages?access_token=" +
-                    token,
+                    process.env.TOKEN_WA,
                 data: {
                     "messaging_product": "whatsapp",
                     "to": from,
@@ -45,9 +43,9 @@ var wa_services = {
                 },
                 method: "POST",
                 url: "https://graph.facebook.com/v12.0/" +
-                    phone_number_id_empresa +
+                    process.env.PHONE_NUMBER_ID_EMPRESA +
                     "/messages?access_token=" +
-                    token,
+                    process.env.TOKEN_WA,
                 data: {
                     "messaging_product": "whatsapp",
                     "to": from,

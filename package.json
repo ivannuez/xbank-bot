@@ -1,7 +1,7 @@
 {
   "name": "xBank",
   "version": "0.3.0",
-  "description": "Empresa de articulos de limpieza",
+  "description": "Bot for xBank",
   "engines": {
     "node": "12.x"
   },

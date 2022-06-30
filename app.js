@@ -3,8 +3,11 @@ var path = require('path');
 var logger = require('morgan');
 var mongoose = require('mongoose');
 
+//PARA LEER LAS VARIABLES CONFIGURADAS
+require('dotenv').config();
+
 //Conexion a la BD
-mongoose.connect('mongodb+srv://xbank:xbank@cluster0.yojhsvx.mongodb.net/xbankdb?retryWrites=true&w=majority', {
+mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true
 }, (err) => {
   if (!err) {
