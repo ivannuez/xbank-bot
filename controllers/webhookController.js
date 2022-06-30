@@ -5,7 +5,6 @@ var Message = require("../models/message");
 
 var wa_services = require("../services/wa_services");
 
-var router_helper = require("../helpers/router_helper");
 var wa_helper = require("../helpers/wa_helper");
 
 router.get("/", (req, res) => {
@@ -27,71 +26,83 @@ router.get("/", (req, res) => {
 
 
 router.post("/", async (req, res) => {
-    let conversartion_id;
+    let conversartion_id_req;
     let numero_remitente;
 
-    console.log(JSON.stringify(req.body, null, 2));
+    //console.log(JSON.stringify(req.body, null, 2));
     try {
-        conversartion_id = req.body.entry[0].changes[0].value.statuses[0].conversation.id;
+        conversartion_id_req = req.body.entry[0].changes[0].value.statuses[0].conversation.id;
     } catch (e) {
         console.log('NO ES UNA CONVERSACION');
     }
 
     //VERIFICAMOS SI ES CONVERSACION O MENSAJE
-    if (conversartion_id) {
-        console.log('EL BODY ES UNA CONVERSACION');
-        console.log(conversartion_id);
+    if (conversartion_id_req) {
+        console.log('ES UNA CONVERSACION');
+        console.log(conversartion_id_req);
         numero_remitente = req.body.entry[0].changes[0].value.statuses[0].recipient_id;
 
-        let conversation_return = await Conversation.findOne({
+        let conversation_db = await Conversation.findOne({
             numero_remitente: numero_remitente,
             estado_conversation: "ACTIVO"
         });
         console.log('RECUPERAMOS LA CONVERSACION GUARDADA');
-        console.log(conversation_return);
+        console.log(conversation_db);
 
-        if (conversation_return) {
-            console.log('ACTUALIZAMOS LA CONVERSACION INICIAL, ADJUNTANDO SU ID DE CONVERSACION');
-            await Conversation.findOneAndUpdate({
-                _id: conversation_return._id
-            }, {
-                id_conversation: conversartion_id
-            }, {
-                upsert: true,
-                useFindAndModify: true
-            });
-        } else {
-            if (conversation_return.id_conversation !== conversartion_id) {
-                console.log('EL ID DE CONVERSACION ES DISTINTO, ASIQUE CERRAMOS LA CONVERSACION ANTERIOR Y CREAMOS UNA NUEVA');
-                //CERRAMOS EL CONVERSACION
-                if (conversation_return) {
+        if (conversation_db) {
+            if (typeof conversation_db.id_conversation === 'undefined') {
+                console.log('ACTUALIZAMOS LA CONVERSACION');
+                console.log('LA CONVERSACION DE DB NO TIENE ID CONVERSIONACION, ASIQUE ACTUALIZAMOS');
+                await Conversation.findOneAndUpdate({
+                    _id: conversation_db._id
+                }, {
+                    id_conversation: conversartion_id_req
+                }, {
+                    upsert: true,
+                    useFindAndModify: true
+                });
+            } else {
+                if (conversation_db.id_conversation !== conversartion_id_req) {
+                    console.log('EL ID DE CONVERSACION ES DISTINTO, ASIQUE CERRAMOS LA CONVERSACION ANTERIOR Y CREAMOS UNA NUEVA');
+                    //CERRAMOS EL CONVERSACION
                     await Conversation.findOneAndUpdate({
-                        _id: conversation_return._id
+                        _id: conversation_db._id
                     }, {
                         estado_conversation: "CERRADO"
                     }, {
                         upsert: true,
                         useFindAndModify: true
                     });
-                }
 
-                //CREAR CONVERSACION
-                let timestamp_inicio = new Date().toISOString();
-                let conversation = new Conversation({
-                    id_conversation: conversartion_id,
-                    numero_remitente: numero_remitente,
-                    timestamp_inicio: timestamp_inicio,
-                    estado_conversation: "ACTIVO"
-                });
-                conversation.save();
-            } else {
-                console.log('RECIBIMOS LA NOTIFICACION DEL MENSAJE QUE ENVIAMOS');
+                    //CREAR CONVERSACION
+                    let timestamp_inicio = new Date().toISOString();
+                    let conversation = new Conversation({
+                        id_conversation: conversartion_id_req,
+                        numero_remitente: numero_remitente,
+                        timestamp_inicio: timestamp_inicio,
+                        estado_conversation: "ACTIVO"
+                    });
+                    await conversation.save();
+                } else {
+                    console.log('RECIBIMOS LA NOTIFICACION DEL MENSAJE QUE ENVIAMOS');
+                }
             }
+        } else {
+            console.log('NO EXISTE CONVERSACION CON ESTE NUMERO, HAY QUE CREAR');
+            //CREAR CONVERSACION
+            let timestamp_inicio = new Date().toISOString();
+            let conversation = new Conversation({
+                id_conversation: conversartion_id_req,
+                numero_remitente: numero_remitente,
+                timestamp_inicio: timestamp_inicio,
+                estado_conversation: "ACTIVO"
+            });
+            await conversation.save();
         }
 
         res.sendStatus(200);
     } else {
-        console.log('EL BODY ES UNA MENSAJE');
+        console.log('ES UNA MENSAJE');
         let mensaje_inicial = false;
         let message_receiver = wa_helper.parse_msg_text(req);
         let timestamp_inicio = new Date().toISOString();
@@ -101,7 +112,7 @@ router.post("/", async (req, res) => {
 
         //GUARDAMOS EL MENSAJE
         let new_message = new Message(message_receiver);
-        new_message.save();
+        await new_message.save();
 
         //OBTENEMOS PRIMERAMENTE LA CONVERSACION VIGENTE
         //PARA PODER GUARDAR LOS MENSAJES
@@ -121,7 +132,7 @@ router.post("/", async (req, res) => {
                 timestamp_inicio: timestamp_inicio,
                 estado_conversation: "ACTIVO"
             });
-            conversation_return.save();
+            await conversation_return.save();
         }
 
         //AGREGAMOS EL MENSAJE EN LA LISTA DE MENSAJES
