@@ -1,4 +1,4 @@
-var Message = require("../models/Message");
+var Message = require("../models/message");
 
 var wa_helper = {
     parse_msg_text: (req) => {
