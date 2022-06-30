@@ -24,10 +24,6 @@
     "nodemon": "^2.0.7",
     "tape": "^4.7.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://git.heroku.com/xBank.git"
-  },
   "keywords": [
     "node",
     "heroku",

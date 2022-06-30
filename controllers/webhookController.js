@@ -1,7 +1,7 @@
 var router = require("express").Router();
 
-var Conversation = require("../models/Conversation");
-var Message = require("../models/Message");
+var Conversation = require("../models/conversation");
+var Message = require("../models/message");
 
 var wa_services = require("../services/wa_services");
 
@@ -48,9 +48,9 @@ router.post("/", async (req, res) => {
             estado_conversation: "ACTIVO"
         });
         console.log('RECUPERAMOS LA CONVERSACION GUARDADA');
-        //console.log(conversation_return);
+        console.log(conversation_return);
 
-        if (conversation_return.id_conversation === undefined) {
+        if (conversation_return) {
             console.log('ACTUALIZAMOS LA CONVERSACION INICIAL, ADJUNTANDO SU ID DE CONVERSACION');
             await Conversation.findOneAndUpdate({
                 _id: conversation_return._id
