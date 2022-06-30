@@ -4,7 +4,7 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 
 //Conexion a la BD
-mongoose.connect('mongodb+srv://xbank:xbank@cluster0.yojhsvx.mongodb.net/?retryWrites=true&w=majority', {
+mongoose.connect('mongodb+srv://xbank:xbank@cluster0.yojhsvx.mongodb.net/xbankdb?retryWrites=true&w=majority', {
   useNewUrlParser: true
 }, (err) => {
   if (!err) {
