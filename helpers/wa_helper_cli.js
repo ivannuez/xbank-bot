@@ -1,6 +1,6 @@
 var Message = require("../models/message");
 
-var wa_helper = {
+var wa_helper_cli = {
     parse_msg_text: (req) => {
         if (req.body.object) {
             if (
@@ -16,7 +16,7 @@ var wa_helper = {
                 message.metadata.display_phone_number = req.body.entry[0].changes[0].value.metadata.display_phone_number;
                 message.metadata.phone_number_id = req.body.entry[0].changes[0].value.metadata.phone_number_id;
 
-                message.contacts.profile.name = req.body.entry[0].changes[0].value.contacts[0].profile.name;
+                message.contacts.profile_name = req.body.entry[0].changes[0].value.contacts[0].profile.name;
                 message.contacts.wa_id = req.body.entry[0].changes[0].value.contacts[0].wa_id;
 
                 message.messages.from = req.body.entry[0].changes[0].value.messages[0].from;
@@ -28,7 +28,7 @@ var wa_helper = {
                 return message;
             }
         }
-    }
+    },
 }
 
-module.exports = wa_helper;
+module.exports = wa_helper_cli;

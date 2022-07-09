@@ -1,73 +1,56 @@
 require('dotenv').config();
 const axios = require("axios").default;
 
+const headers = {
+    "Content-Type": "application/json"
+};
+
 var wa_services = {
     //FUNCIONA
-    send_msg_template: (from, template) => {
-        axios({
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                method: "POST",
-                url: "https://graph.facebook.com/v12.0/" +
-                    process.env.PHONE_NUMBER_ID_EMPRESA +
-                    "/messages?access_token=" +
-                    process.env.TOKEN_WA,
-                data: {
-                    "messaging_product": "whatsapp",
-                    "to": from,
-                    "type": "template",
-                    "template": {
-                        "name": "hello_world",
-                        "language": {
-                            "code": "en_US"
-                        }
+    send_msg_template: async (from, template) => {
+        const res = await axios({
+            headers: headers,
+            method: "POST",
+            url: "https://graph.facebook.com/v12.0/" +
+                process.env.PHONE_NUMBER_ID_EMPRESA +
+                "/messages?access_token=" +
+                process.env.TOKEN_WA,
+            data: {
+                "messaging_product": "whatsapp",
+                "to": from,
+                "type": "template",
+                "template": {
+                    "name": "iniciar_flujo_cbas",
+                    "language": {
+                        "code": "en_US"
                     }
-                },
-            }).then(function (response) {
-                console.log(JSON.stringify(response.data, null, 2))
-                if (response.status === 200) {
-                    //console.log(response.data);
-                } else {
-
                 }
-            })
-            .catch(function (error) {
-                console.log(error);
-            });;
+            },
+        });
+        //console.log(JSON.stringify(res.data, null, 2))
+        return res;
     },
-    send_msg_text: (from, msg) => {
-        axios({
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                method: "POST",
-                url: "https://graph.facebook.com/v12.0/" +
-                    process.env.PHONE_NUMBER_ID_EMPRESA +
-                    "/messages?access_token=" +
-                    process.env.TOKEN_WA,
-                data: {
-                    "messaging_product": "whatsapp",
-                    "to": from,
-                    "preview_url": false,
-                    "recipient_type": "individual",
-                    "type": "text",
-                    "text": {
-                        "body": "ask : " + msg
-                    }
-                },
-            }).then(function (response) {
-                console.log(JSON.stringify(response.data, null, 2))
-                if (response.status === 200) {
-                    //console.log(response.data);
-                } else {
-
+    send_msg_text: async (from, msg) => {
+        const res = await axios({
+            headers: headers,
+            method: "POST",
+            url: "https://graph.facebook.com/v12.0/" +
+                process.env.PHONE_NUMBER_ID_EMPRESA +
+                "/messages?access_token=" +
+                process.env.TOKEN_WA,
+            data: {
+                "messaging_product": "whatsapp",
+                "to": from,
+                "preview_url": false,
+                "recipient_type": "individual",
+                "type": "text",
+                "text": {
+                    "body": msg
                 }
-            })
-            .catch(function (error) {
-                console.log(error);
-            });;
-    },
+            },
+        });
+        return res;
+    }
 }
 
 module.exports = wa_services;

@@ -10,11 +10,11 @@ var conversationSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    timestamp_inicio: {
+    inicio_timestamp: {
         type: String,
         required: false
     },
-    timestamp_final: {
+    final_timestamp: {
         type: String,
         required: false
     },
@@ -27,9 +27,17 @@ var conversationSchema = new mongoose.Schema({
         required: false
     },
     messages: [{
-        type: mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.Mixed,
         ref: 'Message',
-    }, ],
+    }],
+    flujo: {
+        type: mongoose.Schema.Types.Mixed,
+        ref: 'Flujo',
+    },
+    actividades: [{
+        type: mongoose.Schema.Types.Mixed,
+        ref: 'Actividades',
+    }],
 });
 
 //Export the model
