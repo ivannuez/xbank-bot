@@ -16,7 +16,8 @@ var interprete_helper = {
         //ANALIZAMOS SI ES EL PRIMER MENSAJE
         if (conversation.messages.length === 1) {
             console.log("ES EL PRIMER MENSAJE, DEBEMOS DE ENVIAR EL MENSAJE DE BIENVENIDA");
-            msjResponse = actividad.texto;
+            //msjResponse = actividad.texto;
+            msjResponse = "";
         } else {
             //VERIFICAMOS QUE LA ULTIMA ACTIVAD NO SEA LA DE FINALIZAR
             if (actividad.tipo === "FINALIZAR") {
